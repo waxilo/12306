@@ -15,9 +15,12 @@ class SessionManager:
         if clazz._session is None:
             clazz._session = requests.Session()
             clazz._ua = UserAgent()
-
+            
             clazz._session.headers.update({'User-Agent': clazz._ua.random})
             clazz._session.get("https://www.12306.cn/index/otn/login/conf")
         return clazz._session
 
-
+    @classmethod
+    def clear_session(clazz):
+        clazz._session = None
+        clazz._ua = None

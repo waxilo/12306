@@ -1,6 +1,7 @@
 from session_manager import SessionManager
 from requests import Response
 from models import SearchParams
+from models import SearchResult
 
 
 class TicketService:
@@ -20,4 +21,13 @@ class TicketService:
         if isinstance(params, SearchParams):
             params = params.get_params()
         response: Response = SessionManager.get_session().get(url='https://kyfw.12306.cn/otn/leftTicket/queryG', params = params)
-        return response.json()
+        try:
+            return response.json()
+        except:
+            SessionManager.clear_session()
+            return 'fail'
+        
+        # results = response.json()['data']['result']
+        # for result in results:
+        #     search_result = SearchResult(result)
+        #     search_result.get
