@@ -1,9 +1,7 @@
-"""Flask 应用入口"""
-
 from flask import Flask
 from routes import  ticket_bp
 
-# 创建 Flask 应用实例
+# 创建 web 应用实例
 app = Flask(__name__)
 
 # 注册蓝图
