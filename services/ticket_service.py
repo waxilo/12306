@@ -1,5 +1,3 @@
-from requests.sessions import Session
-
 from session_manager import SessionManager
 from requests.models import Response
 
