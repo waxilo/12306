@@ -1,5 +1,5 @@
 import requests
-from requests.sessions import Session
+from requests import Session
 from fake_useragent import UserAgent
 
 

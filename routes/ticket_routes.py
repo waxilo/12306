@@ -1,6 +1,6 @@
 from flask import Blueprint
-from models.search_params import SearchParams
-from services.ticket_service import TicketService
+from models import SearchParams
+from services import TicketService
 
 ticket_bp = Blueprint('ticket', __name__)
 

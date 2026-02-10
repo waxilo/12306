@@ -1,6 +1,6 @@
 from session_manager import SessionManager
-from requests.models import Response
-from models.search_params import SearchParams
+from requests import Response
+from models import SearchParams
 
 
 class TicketService:
