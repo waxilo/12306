@@ -22,12 +22,23 @@ class TicketService:
             params = params.get_params()
         response: Response = SessionManager.get_session().get(url='https://kyfw.12306.cn/otn/leftTicket/queryG', params = params)
         try:
-            return response.json()
+            arr = []
+            results = response.json()['data']['result']
+            for result in results:
+                item = []
+                search_result = SearchResult(result)
+                item.append(search_result.getTrainNo())
+                item.append(search_result.getStartStation())
+                item.append(search_result.getEndStation())
+                item.append(search_result.getFromStation())
+                item.append(search_result.getToStation())
+                item.append(search_result.getDepartureTime())
+                item.append(search_result.getArrivalTime())
+                item.append(search_result.getDuration())
+                arr.append(item)
+            return arr
         except:
             SessionManager.clear_session()
             return 'fail'
         
-        # results = response.json()['data']['result']
-        # for result in results:
-        #     search_result = SearchResult(result)
-        #     search_result.get
+        
