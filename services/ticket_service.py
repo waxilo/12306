@@ -8,7 +8,7 @@ class TicketService:
     """负责车票查询相关接口"""    
     
     @classmethod
-    def search_tickets(cls):
+    def search_tickets(clazz):
 
         session: Session = SessionManager.get_session()
         

@@ -10,14 +10,14 @@ class SessionManager:
 
     
     @classmethod
-    def get_session(cls) -> Session:
+    def get_session(clazz) -> Session:
 
-        if cls._session is None:
-            cls._session = requests.Session()
-            cls._ua = UserAgent()
+        if clazz._session is None:
+            clazz._session = requests.Session()
+            clazz._ua = UserAgent()
 
-            cls._session.headers.update({'User-Agent': cls._ua.random})
-            cls._session.get("https://www.12306.cn/index/otn/login/conf")
-        return cls._session
+            clazz._session.headers.update({'User-Agent': clazz._ua.random})
+            clazz._session.get("https://www.12306.cn/index/otn/login/conf")
+        return clazz._session
 
 
