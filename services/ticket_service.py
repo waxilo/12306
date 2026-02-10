@@ -27,6 +27,7 @@ class TicketService:
             for result in results:
                 item = []
                 search_result = SearchResult(result)
+                item.append(search_result.decryptField())
                 item.append(search_result.getTrainNo())
                 item.append(search_result.getStartStation())
                 item.append(search_result.getEndStation())

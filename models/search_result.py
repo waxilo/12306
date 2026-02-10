@@ -1,7 +1,17 @@
+import urllib
+
+
 class SearchResult:
     
     def __init__(self, data_str: str):
        self.arr = data_str.split('|')
+
+    def decryptField(self):
+        """解密加密字段
+        Returns:
+            解密后的字段值
+        """
+        return urllib.parse.unquote(self.arr[0])
 
     def getTrainNo(self):
         """获取列车号
