@@ -1,1 +1,1 @@
-from ticket_service import TicketService
+from services.ticket_service import TicketService

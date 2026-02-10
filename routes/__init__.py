@@ -1,3 +1,3 @@
-from ticket_routes import ticket_bp
+from routes.ticket_routes import ticket_bp
 
 __all__ = ['ticket_bp']
