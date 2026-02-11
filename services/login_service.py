@@ -8,22 +8,24 @@ import png
 
 class LoginService:
 
-    def qr_login(self):
+    @staticmethod
+    def qr_login():
         """实现二维码登录逻辑
         """
         # 下载二维码
-        uuid, img_path = self.download_qr_code()
+        uuid, img_path = LoginService.download_qr_code()
         # 控制台打印二维码
-        self.print_qrcode(img_path)
+        LoginService.print_qrcode(img_path)
         # 循环检查二维码状态
-        flag = self.check_qr_code_status(uuid)
+        flag = LoginService.check_qr_code_status(uuid)
 
         # 登录成功，移除文件
         os.remove(img_path)
 
         return flag
 
-    def download_qr_code(self):
+    @staticmethod
+    def download_qr_code():
         """下载二维码
         """
         response: Response = SessionManager.get_session().post(url='https://kyfw.12306.cn/passport/web/create-qr64', data = {'appid': 'otn'})
@@ -40,7 +42,8 @@ class LoginService:
             print('下载二维码失败:', str(e))
             return None, None
 
-    def check_qr_code_status(self, uuid):
+    @staticmethod
+    def check_qr_code_status(uuid):
         """检查二维码状态
         """
         while uuid is not None:
@@ -63,7 +66,8 @@ class LoginService:
                 print('检查二维码状态失败:', str(e))
                 return False
 
-    def print_qrcode(self, path):
+    @staticmethod
+    def print_qrcode(path):
         reader = png.Reader(path)
         width, height, rows, info = reader.read()
         lines = list(rows)

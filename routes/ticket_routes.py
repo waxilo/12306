@@ -13,4 +13,4 @@ def search() :
 
 @ticket_bp.route('/qr_login', methods=['GET'])
 def qr_login() :
-    return {'message': LoginService().qr_login()}
+    return {'message': LoginService.qr_login()}
