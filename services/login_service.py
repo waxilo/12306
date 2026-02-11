@@ -13,9 +13,6 @@ class LoginService:
 
         # 下载二维码
         uuid, img_path = clazz.download_qr_code()
-
-        # 控制台打印二维码
-        # clazz.print_qrcode(img_path)
         
         # 循环检查二维码状态
         clazz.check_qr_code_status(uuid)
