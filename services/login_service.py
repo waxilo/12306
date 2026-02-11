@@ -10,19 +10,21 @@ class LoginService:
 
     @classmethod
     def qr_login(clazz):
-        """实现二维码登录逻辑
-        """
+
         # 下载二维码
         uuid, img_path = clazz.download_qr_code()
-        # 控制台打印二维码
-        clazz.print_qrcode(img_path)
-        # 循环检查二维码状态
-        flag = clazz.check_qr_code_status(uuid)
 
-        # 登录成功，移除文件
+        # 控制台打印二维码
+        # clazz.print_qrcode(img_path)
+        
+        # 循环检查二维码状态
+        clazz.check_qr_code_status(uuid)
+
+        # 移除二维码
         os.remove(img_path)
 
-        return flag
+        # 登录
+        return clazz.post_login()
 
     @classmethod
     def download_qr_code(clazz):    
@@ -43,7 +45,7 @@ class LoginService:
             return None, None
 
     @classmethod
-    def check_qr_code_status(clazz, uuid)   :
+    def check_qr_code_status(clazz, uuid) :
         """检查二维码状态
         """
         while uuid is not None:
@@ -57,107 +59,30 @@ class LoginService:
                     print('已扫描，等待确认...')
                 elif result_code == 2:
                     print('扫描成功')
-                    return True
+                    break
                 elif result_code == 3:
                     print('二维码已过期')
-                    return False
+                    break
                 time.sleep(1)
             except Exception as e:
                 print('检查二维码状态失败:', str(e))
-                return False
+                break
 
     @classmethod
-    def print_qrcode(clazz, path)   :
-        reader = png.Reader(path)
-        width, height, rows, info = reader.read()
-        lines = list(rows)
+    def post_login(clazz):
+        SessionManager.get_session().get(url='https://kyfw.12306.cn/otn/login/userLogin', allow_redirects=True)
+        new_tk = clazz.auth_uamtk()
+        return clazz.auth_uamauthclient(new_tk)
 
-        planes = info['planes']  # 通道数
-        threshold = (2 ** info['bitdepth']) / 2  # 色彩阈值
+    @classmethod
+    def auth_uamtk(clazz):
+        response = SessionManager.get_session().post("https://kyfw.12306.cn/passport/web/auth/uamtk", data={'appid': 'otn'}, headers={
+            'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin',
+            'Origin': 'https://kyfw.12306.cn'
+        })
+        return response.json()['newapptk']
 
-        # 识别二维码尺寸
-        x_flag = -1   # x 边距标志
-        y_flag = -1   # y 边距标志
-        x_white = -1  # 定位图案白块 x 坐标
-        y_white = -1  # 定位图案白块 y 坐标
-
-        i = y_flag
-        while i < height:
-            if y_white > 0 and x_white > 0:
-                break
-            j = x_flag
-            while j < width:
-                total = 0
-                for k in range(planes):
-                    px = lines[i][j * planes + k]
-                    total += px
-                avg = total / planes
-                black = avg < threshold
-                if y_white > 0 and x_white > 0:
-                    break
-                if x_flag > 0 > x_white and not black:
-                    x_white = j
-                if x_flag == -1 and black:
-                    x_flag = j
-                if y_flag > 0 > y_white and not black:
-                    y_white = i
-                if y_flag == -1 and black:
-                    y_flag = i
-                if x_flag > 0 and y_flag > 0:
-                    i += 1
-                j += 1
-            i += 1
-
-        assert y_white - y_flag == x_white - x_flag
-        scale = y_white - y_flag
-
-        assert width - x_flag == height - y_flag
-        module_count = int((width - x_flag * 2) / scale)
-
-        whole_white = '█'
-        whole_black = ' '
-        down_black = '▀'
-        up_black = '▄'
-
-        dual_flag = False
-        last_line = []
-        output = '\n'
-        for i in range(module_count + 2):
-            output += up_black
-        output += '\n'
-        i = y_flag
-        while i < height - y_flag:
-            if dual_flag:
-                output += whole_white
-            t = 0
-            j = x_flag
-            while j < width - x_flag:
-                total = 0
-                for k in range(planes):
-                    px = lines[i][j * planes + k]
-                    total += px
-                avg = total / planes
-                black = avg < threshold
-                if dual_flag:
-                    last_black = last_line[t]
-                    if black and last_black:
-                        output += whole_black
-                    elif black and not last_black:
-                        output += down_black
-                    elif not black and last_black:
-                        output += up_black
-                    elif not black and not last_black:
-                        output += whole_white
-                else:
-                    last_line[t:t+1] = [black]
-                t = t + 1
-                j += scale
-            if dual_flag:
-                output += whole_white + '\n'
-            dual_flag = not dual_flag
-            i += scale
-        output += whole_white
-        for i in range(module_count):
-            output += up_black if last_line[i] else whole_white
-        output += whole_white + '\n'
-        print(output, flush=True)
+    @classmethod
+    def auth_uamauthclient(clazz, tk):
+        response = SessionManager.get_session().post("https://kyfw.12306.cn/otn/uamauthclient", data={'tk': tk})
+        return response.json()['username']
