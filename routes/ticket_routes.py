@@ -1,6 +1,6 @@
 from flask import Blueprint
 from models import SearchParams
-from services import TicketService, LoginService
+from services import TicketService, LoginService, UserService
 from datetime import date
 
 ticket_bp = Blueprint('ticket', __name__)
@@ -14,3 +14,7 @@ def search() :
 @ticket_bp.route('/qr_login', methods=['GET'])
 def qr_login() :
     return {'message': LoginService.qr_login()}
+
+@ticket_bp.route('/user_info', methods=['GET'])
+def user_info() :
+    return UserService.user_info()
