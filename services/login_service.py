@@ -67,16 +67,20 @@ class LoginService:
 
     @classmethod
     def post_login(clazz):
+        headers={
+            'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin',
+            'Origin': 'https://kyfw.12306.cn'
+        }
+        SessionManager.get_session().cookies.update(headers)
         SessionManager.get_session().get(url='https://kyfw.12306.cn/otn/login/userLogin', allow_redirects=True)
         new_tk = clazz.auth_uamtk()
-        return clazz.auth_uamauthclient(new_tk)
+        username =  clazz.auth_uamauthclient(new_tk)
+        SessionManager.get_session().get(url='https://kyfw.12306.cn/otn/login/userLogin', allow_redirects=True)
+        return username
 
     @classmethod
     def auth_uamtk(clazz):
-        response = SessionManager.get_session().post("https://kyfw.12306.cn/passport/web/auth/uamtk", data={'appid': 'otn'}, headers={
-            'Referer': 'https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin',
-            'Origin': 'https://kyfw.12306.cn'
-        })
+        response = SessionManager.get_session().post("https://kyfw.12306.cn/passport/web/auth/uamtk", data={'appid': 'otn'})
         return response.json()['newapptk']
 
     @classmethod

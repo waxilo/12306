@@ -10,7 +10,6 @@ class UserService:
         })
         response: Response = SessionManager.get_session().post('https://kyfw.12306.cn/otn/modifyUser/initQueryUserInfoApi')
         try:
-            print('获取请求cookie:', SessionManager.get_session().cookies)
             return response.json()
         except Exception as e:
             print('获取用户信息失败，响应:', response.text, str(e))
