@@ -3,7 +3,6 @@ import os
 from requests import Response
 from session_manager import SessionManager
 import base64
-import png
 
 
 class LoginService:
